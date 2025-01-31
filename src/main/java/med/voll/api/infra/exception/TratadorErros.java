@@ -1,6 +1,7 @@
 package med.voll.api.infra.exception;
 
 import jakarta.persistence.EntityNotFoundException;
+import med.voll.api.domain.domain.ValidacaoException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -19,6 +20,11 @@ public class TratadorErros {
     public ResponseEntity trartarErro400(MethodArgumentNotValidException ex){
         var erros = ex.getFieldErrors();
         return ResponseEntity.badRequest().body(erros.stream().map(DadosErroValidacao::new).toList());
+    }
+
+    @ExceptionHandler(ValidacaoException.class)
+    public ResponseEntity trartarErroRegraNegocio(ValidacaoException ex){
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
     private record DadosErroValidacao(String campo, String mensagem){

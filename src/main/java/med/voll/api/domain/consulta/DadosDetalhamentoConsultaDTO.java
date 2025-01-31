@@ -6,5 +6,15 @@ public record DadosDetalhamentoConsultaDTO(
         Long id,
         Long idMedico,
         Long idPaciente,
-        LocalDateTime data) {
+        LocalDateTime data,
+        boolean ativo) {
+
+    public DadosDetalhamentoConsultaDTO(Consulta consulta) {
+        this(
+                consulta.getId(),
+                consulta.getMedico().getId(),
+                consulta.getPaciente().getId(),
+                consulta.getData(),
+                consulta.isAtivo());
+    }
 }
