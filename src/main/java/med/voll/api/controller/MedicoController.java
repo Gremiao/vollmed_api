@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -21,6 +22,7 @@ public class MedicoController {
 
     @PostMapping
     @Transactional
+    @Secured({"ROLE_ADMINISTRATOR"})
     public ResponseEntity cadastrarMedico(@RequestBody @Valid DadosCadastroMedicoDTO dados, UriComponentsBuilder uriBuilder ) {
         var medico = new Medico(dados);
         medicoRepository.save(medico);
@@ -29,6 +31,7 @@ public class MedicoController {
     }
 
     @GetMapping()
+    @Secured({"ROLE_USER","ROLE_ADMINISTRATOR"})
     public ResponseEntity<Page<DadosListagemMedicoDTO>> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
         var page = medicoRepository.findAllByAtivoTrue(paginacao).map(DadosListagemMedicoDTO::new);
         return ResponseEntity.ok(page);
@@ -51,6 +54,7 @@ public class MedicoController {
     }
 
     @GetMapping("/{id}")
+    @Secured({"ROLE_USER","ROLE_ADMINISTRATOR"})
     public ResponseEntity detalhar(@PathVariable Long id){
         var medico = medicoRepository.getReferenceById(id);
         return ResponseEntity.ok(new DadosDetalhamentoMedicoDTO(medico));
